@@ -12,11 +12,11 @@ Assuming that Bob plays with an optimal strategy, what is the expected number of
 
 # Bob
 class Card
-  
-  def init(value, probability)
-    :value = nil
-    :up = true
-    :probability = nil
+  attr_accessor :value, :up, :probability
+  def initialize(val, prob)
+    @value = val
+    @up = true
+    @probability = prob
   end
 
   def chosen
@@ -26,29 +26,37 @@ class Card
 end
 
 class Game
-  cards = []
-  def init
+  attr_reader :cards, :turns
+  @@cards = []
+  @@turns = []
+  def initialize
     probability = [7,8,8,9,9,10,3,3,2,2,1,1]
-    1..12.loop do |card|
-      cards << Card.new(card, probability[card-1])
+    12.times do |value|
+      @@cards << Card.new(value + 1, probability[value])
     end
+
   end
 
   #check is all ups are false
   def end_game?
-    cards.each do |card|
+    @@cards.each do |card|
       return false if card.up == true
     end
     true
   end
 
   def lowest_prob(d1, d2, combo)
-    cards.each do |card|
-      card_1 = card if d1 == card.value
-      card_2 = card if d2 == card.value
-      card_3 = card if combo == card.value
+    options = []
+    @@cards.each do |card|
+      if card.up == true
+        options << card if d1 == card.value
+        options << card if d2 == card.value
+        options << card if combo == card.value
+      end
     end
-    
+    options.min_by {|card| card.probability}
+    # find the card with the lowest probability
+  end
 
     
 
@@ -61,4 +69,21 @@ class Game
       flip_card(lowest_prob(die_1, die_2, die_1 + die_2))
       turns_count += 1
     end
+
+    turns_count
   end
+
+  def flip_card(card)
+    card.up = false if card 
+  end
+
+
+end
+
+turns = []
+1000.times do
+  new_game = Game.new
+  turns << new_game.play
+end
+
+puts (turns.inject{ |sum, el| sum + el }.to_f / turns.size).round(6)
