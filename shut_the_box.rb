@@ -58,8 +58,6 @@ class Game
     # find the card with the lowest probability
   end
 
-    
-
   def play
     turns_count = 0
     while end_game? == false
@@ -69,19 +67,16 @@ class Game
       flip_card(lowest_prob(die_1, die_2, die_1 + die_2))
       turns_count += 1
     end
-
     turns_count
   end
 
   def flip_card(card)
-    card.up = false if card 
+    card.up = false if card
   end
-
-
 end
 
 turns = []
-1000.times do
+10.times do
   new_game = Game.new
   turns << new_game.play
 end
